@@ -30,15 +30,12 @@ void UDAnimNotify_AttackHit::Notify(class USkeletalMeshComponent* MeshComp, clas
 		DrawDebugPoint(Character->GetWorld(), TraceEnd, 8, FColor::Green, false, 2.0f);
 		DrawDebugLine(Character->GetWorld(), TraceStart, TraceEnd, FColor::Red, false, 2.0f);
 		FVector Center = ((TraceEnd - TraceStart).GetSafeNormal() * 70.0f) + TraceStart;
-		//FVector Center = ((TraceEnd - TraceStart) / 2 + TraceStart);
 		FVector Inter = TraceEnd - TraceStart;
 		Inter.Normalize();
 
-		FQuat MyQuat = Inter.ToOrientationQuat() * FQuat::MakeFromRotator(FRotator(90, 0, 0));
-		UE_LOG(LogTemp, Log, TEXT("Start vector = %s"), *MyQuat.ToString());
+		FQuat RotQuat = Inter.ToOrientationQuat() * FQuat::MakeFromRotator(FRotator(90, 0, 0));
 
-
-		DrawDebugCapsule(Character->GetWorld(), Center, Shape.GetCapsuleHalfHeight(), Shape.GetCapsuleRadius(), MyQuat, FColor::Purple, false, 2.0f);
+		DrawDebugCapsule(Character->GetWorld(), Center, Shape.GetCapsuleHalfHeight(), Shape.GetCapsuleRadius(), RotQuat, FColor::Purple, false, 2.0f);
 		FHitResult Hit;
 		if (Character->GetWorld()->SweepSingleByObjectType(Hit, Center, Center, FQuat::Identity, ObjParams, Shape, Params))
 		{

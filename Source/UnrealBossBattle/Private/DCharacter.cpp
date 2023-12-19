@@ -80,7 +80,6 @@ void ADCharacter::Move(const FInputActionInstance& Instance)
 
 	// Get movement vector from input
 	const FVector2D AxisValue = Instance.GetValue().Get<FVector2D>();
-
 	// Forward/Back
 	AddMovementInput(ControlRot.Vector(), AxisValue.Y);
 

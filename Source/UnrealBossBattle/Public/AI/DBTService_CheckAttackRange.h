@@ -4,7 +4,9 @@
 
 #include "CoreMinimal.h"
 #include "BehaviorTree/BTService.h"
+#include "Engine/EngineTypes.h"
 #include "DBTService_CheckAttackRange.generated.h"
+
 
 /**
  * 
@@ -20,5 +22,4 @@ protected:
 	FBlackboardKeySelector AttackRangeKey;
 
 	virtual void TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds) override;
-	
 };

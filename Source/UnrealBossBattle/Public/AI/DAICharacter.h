@@ -4,6 +4,8 @@
 #include "GameFramework/Character.h"
 #include "DAICharacter.generated.h"
 
+class UDActionComponent;
+
 UCLASS()
 class UNREALBOSSBATTLE_API ADAICharacter : public ACharacter
 {
@@ -14,6 +16,9 @@ public:
 	ADAICharacter();
 
 protected:
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
+	UDActionComponent* ActionComp;
+
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
