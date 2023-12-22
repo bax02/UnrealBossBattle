@@ -2,23 +2,22 @@
 
 
 #include "Animation/DAnimNotify_AttackHit.h"
-#include "DCharacter.h"
 #include "DrawDebugHelpers.h"
+#include "GameFramework/Character.h"
 
 void UDAnimNotify_AttackHit::Notify(class USkeletalMeshComponent* MeshComp, class UAnimSequenceBase* Animation, const FAnimNotifyEventReference& EventReference)
 {
 	Super::Notify(MeshComp, Animation, EventReference);
 
-	ADCharacter* Character = Cast<ADCharacter>(MeshComp->GetOwner());
+	ACharacter* Character = Cast<ACharacter>(MeshComp->GetOwner());
 	if (Character)
 	{
-		FVector TraceStart = Character->GetMesh()->GetSocketLocation("Sword_Base");
-		FVector TraceEnd = Character->GetMesh()->GetSocketLocation("Sword_Tip");
+		FVector TraceStart = Character->GetMesh()->GetSocketLocation(TraceStartSocket);
+		FVector TraceEnd = Character->GetMesh()->GetSocketLocation(TraceEndSocket);
 
 		FCollisionShape Shape;
-		FVector Extent = FVector(100.f, 100.f, 100.f);
 
-		Shape.SetCapsule(20.f, 65.0f);
+		Shape.SetCapsule(CapsuleRadius, CapsuleHalfHeight);
 
 		FCollisionObjectQueryParams ObjParams;
 		ObjParams.AddObjectTypesToQuery(ECC_Pawn);
@@ -29,7 +28,7 @@ void UDAnimNotify_AttackHit::Notify(class USkeletalMeshComponent* MeshComp, clas
 		DrawDebugPoint(Character->GetWorld(), TraceStart, 8, FColor::Green, false, 2.0f);
 		DrawDebugPoint(Character->GetWorld(), TraceEnd, 8, FColor::Green, false, 2.0f);
 		DrawDebugLine(Character->GetWorld(), TraceStart, TraceEnd, FColor::Red, false, 2.0f);
-		FVector Center = ((TraceEnd - TraceStart).GetSafeNormal() * 70.0f) + TraceStart;
+		FVector Center = ((TraceEnd - TraceStart).GetSafeNormal() * CapsuleHalfHeight) + TraceStart;
 		FVector Inter = TraceEnd - TraceStart;
 		Inter.Normalize();
 
@@ -37,7 +36,7 @@ void UDAnimNotify_AttackHit::Notify(class USkeletalMeshComponent* MeshComp, clas
 
 		DrawDebugCapsule(Character->GetWorld(), Center, Shape.GetCapsuleHalfHeight(), Shape.GetCapsuleRadius(), RotQuat, FColor::Purple, false, 2.0f);
 		FHitResult Hit;
-		if (Character->GetWorld()->SweepSingleByObjectType(Hit, Center, Center, FQuat::Identity, ObjParams, Shape, Params))
+		if (Character->GetWorld()->SweepSingleByObjectType(Hit, Center, Center, RotQuat, ObjParams, Shape, Params))
 		{
 			FString Msg = FString::Printf(TEXT("Hit"));
 			GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Blue, Msg);

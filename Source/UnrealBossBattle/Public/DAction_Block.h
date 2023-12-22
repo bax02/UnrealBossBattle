@@ -19,6 +19,9 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "Block")
 	TObjectPtr<UAnimMontage> BlockAnim;
 
+	UPROPERTY(EditAnywhere, Category = "Attack")
+	TObjectPtr<USoundBase> BlockingSound;
+
 public:
 
 	virtual void StartAction_Implementation(AActor* Instigator) override;

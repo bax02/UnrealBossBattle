@@ -17,6 +17,17 @@ bool UDAttributeComponent::ApplyHealthChange(float Delta)
 {
 	Health += Delta;
 
+	OnHealthChanged.Broadcast(nullptr, this, Health, Delta);
+
 	return true;
+}
+
+UDAttributeComponent* UDAttributeComponent::GetAttributes(AActor* FromActor)
+{
+	if (FromActor)
+	{
+		return FromActor->FindComponentByClass<UDAttributeComponent>();
+	}
+	return nullptr;
 }
 

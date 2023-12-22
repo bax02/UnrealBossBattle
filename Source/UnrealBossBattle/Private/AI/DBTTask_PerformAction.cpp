@@ -7,15 +7,14 @@
 
 EBTNodeResult::Type UDBTTask_PerformAction::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
-	AAIController* const Controller = OwnerComp.GetAIOwner();
+	Controller = OwnerComp.GetAIOwner();
 	if (Controller)
 	{
-		ACharacter* const Character = Cast<ACharacter>(Controller->GetPawn());
+		Character = Cast<ACharacter>(Controller->GetPawn());
 		if (Character)
 		{
 
 			Character->PlayAnimMontage(AnimMontage);
-			
 			FTimerHandle TimerHandle_AnimMontageDelay;
 			FTimerDelegate Delegate;
 			Delegate.BindUFunction(this, "AnimMontageDelay_Elapsed", &OwnerComp);

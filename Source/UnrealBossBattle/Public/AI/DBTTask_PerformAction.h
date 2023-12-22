@@ -26,6 +26,10 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "Animation")
 	float TransitionTime;
 
+	AAIController* Controller;
+
+	ACharacter* Character;
+
 public:
 	EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) override;
 

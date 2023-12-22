@@ -4,9 +4,11 @@
 #include "DCharacter.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Components/CapsuleComponent.h"
 #include "Camera/CameraComponent.h"
 #include "DActionComponent.h"
 #include "DAttributeComponent.h"
+#include "Kismet/GameplayStatics.h"
 
 // Enhanced Input
 #include "EnhancedInputComponent.h"
@@ -33,6 +35,10 @@ ADCharacter::ADCharacter()
 	GetCharacterMovement()->bOrientRotationToMovement = true;
 	bUseControllerRotationYaw = false;
 
+	CapsuleComp = CreateDefaultSubobject<UCapsuleComponent>("CapsuleComp");
+	CapsuleComp->SetupAttachment(GetMesh(), "SwordCenter");
+	CapsuleComp->ComponentTags.Add("WeaponCollision");
+
 }
 
 // Called every frame
@@ -40,6 +46,33 @@ void ADCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+}
+
+void ADCharacter::OnActorOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	if (OtherActor && OtherActor != this)
+	{
+		DrawDebugCapsule(GetWorld(), CapsuleComp->GetComponentLocation(), CapsuleComp->GetScaledCapsuleHalfHeight(),
+			CapsuleComp->GetScaledCapsuleRadius(), CapsuleComp->GetComponentRotation().Quaternion(), FColor::Blue, false, 2.0f);
+		CapsuleComp->SetGenerateOverlapEvents(false);
+
+		UDAttributeComponent* HitAttributeComp = UDAttributeComponent::GetAttributes(OtherActor);
+
+		UGameplayStatics::SpawnSoundAttached(HitSound, CapsuleComp);
+
+		if (HitAttributeComp)
+		{
+			HitAttributeComp->ApplyHealthChange(-20.f);
+		}
+
+	}
+}
+
+void ADCharacter::PostInitializeComponents()
+{
+	Super::PostInitializeComponents();
+
+	CapsuleComp->OnComponentBeginOverlap.AddDynamic(this, &ADCharacter::OnActorOverlap);
 }
 
 // Called to bind functionality to input

@@ -3,6 +3,7 @@
 
 #include "DAction_Block.h"
 #include "GameFramework/Character.h"
+#include "Kismet/GameplayStatics.h"
 
 void UDAction_Block::StartAction_Implementation(AActor* Instigator)
 {
@@ -12,7 +13,7 @@ void UDAction_Block::StartAction_Implementation(AActor* Instigator)
 	{
 		// Play animation and sound
 		Character->PlayAnimMontage(BlockAnim);
-		//UGameplayStatics::SpawnSoundAttached(AttackingSound, Character->GetMesh());
+		UGameplayStatics::SpawnSoundAttached(BlockingSound, Character->GetMesh());
 
 	}
 }
