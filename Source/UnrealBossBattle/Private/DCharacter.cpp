@@ -4,15 +4,16 @@
 #include "DCharacter.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
-#include "Components/CapsuleComponent.h"
 #include "Camera/CameraComponent.h"
 #include "DActionComponent.h"
-#include "DAttributeComponent.h"
+#include "DInteractionComponent.h"
+#include "DCharacterAttributeComponent.h"
 #include "Kismet/GameplayStatics.h"
 
 // Enhanced Input
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
+#include "DCapsuleHitboxComponent.h"
 
 // Sets default values
 ADCharacter::ADCharacter()
@@ -30,49 +31,23 @@ ADCharacter::ADCharacter()
 
 	ActionComp = CreateDefaultSubobject<UDActionComponent>("ActionComp");
 
-	AttributeComp = CreateDefaultSubobject<UDAttributeComponent>("AttributeComp");
+	CharacterAttributeComp = CreateDefaultSubobject<UDCharacterAttributeComponent>("AttributeComp");
+
+	InteractionComp = CreateDefaultSubobject<UDInteractionComponent>("InteractionComp");
+
+	HitboxComp = CreateDefaultSubobject<UDCapsuleHitboxComponent>("HitboxComp");
+	HitboxComp->SetupAttachment(GetMesh(), "SwordCenter");
+	HitboxComp->ComponentTags.Add("WeaponCollision");
 
 	GetCharacterMovement()->bOrientRotationToMovement = true;
 	bUseControllerRotationYaw = false;
-
-	CapsuleComp = CreateDefaultSubobject<UCapsuleComponent>("CapsuleComp");
-	CapsuleComp->SetupAttachment(GetMesh(), "SwordCenter");
-	CapsuleComp->ComponentTags.Add("WeaponCollision");
-
+	bCanMove = true;
 }
 
 // Called every frame
 void ADCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
-}
-
-void ADCharacter::OnActorOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
-{
-	if (OtherActor && OtherActor != this)
-	{
-		DrawDebugCapsule(GetWorld(), CapsuleComp->GetComponentLocation(), CapsuleComp->GetScaledCapsuleHalfHeight(),
-			CapsuleComp->GetScaledCapsuleRadius(), CapsuleComp->GetComponentRotation().Quaternion(), FColor::Blue, false, 2.0f);
-		CapsuleComp->SetGenerateOverlapEvents(false);
-
-		UDAttributeComponent* HitAttributeComp = UDAttributeComponent::GetAttributes(OtherActor);
-
-		UGameplayStatics::SpawnSoundAttached(HitSound, CapsuleComp);
-
-		if (HitAttributeComp)
-		{
-			HitAttributeComp->ApplyHealthChange(-20.f);
-		}
-
-	}
-}
-
-void ADCharacter::PostInitializeComponents()
-{
-	Super::PostInitializeComponents();
-
-	CapsuleComp->OnComponentBeginOverlap.AddDynamic(this, &ADCharacter::OnActorOverlap);
 }
 
 // Called to bind functionality to input
@@ -95,6 +70,7 @@ void ADCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 
 	// Bind Actions
 	InputComp->BindAction(Input_Move, ETriggerEvent::Triggered, this, &ADCharacter::Move);
+	InputComp->BindAction(Input_Interact, ETriggerEvent::Triggered, this, &ADCharacter::Interact);
 	InputComp->BindAction(Input_LookMouse, ETriggerEvent::Triggered, this, &ADCharacter::LookMouse);
 	InputComp->BindAction(Input_LookStick, ETriggerEvent::Triggered, this, &ADCharacter::LookStick);
 	InputComp->BindAction(Input_Sprint, ETriggerEvent::Started, this, &ADCharacter::SprintStart);
@@ -107,18 +83,21 @@ void ADCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 
 void ADCharacter::Move(const FInputActionInstance& Instance)
 {
-	FRotator ControlRot = GetControlRotation();
-	ControlRot.Pitch = 0.0f;
-	ControlRot.Roll = 0.0f;
+	if (bCanMove)
+	{
+		FRotator ControlRot = GetControlRotation();
+		ControlRot.Pitch = 0.0f;
+		ControlRot.Roll = 0.0f;
 
-	// Get movement vector from input
-	const FVector2D AxisValue = Instance.GetValue().Get<FVector2D>();
-	// Forward/Back
-	AddMovementInput(ControlRot.Vector(), AxisValue.Y);
+		// Get movement vector from input
+		const FVector2D AxisValue = Instance.GetValue().Get<FVector2D>();
+		// Forward/Back
+		AddMovementInput(ControlRot.Vector(), AxisValue.Y);
 
-	// Right/Left
-	const FVector RightVector = FRotationMatrix(ControlRot).GetScaledAxis(EAxis::Y);
-	AddMovementInput(RightVector, AxisValue.X);
+		// Right/Left
+		const FVector RightVector = FRotationMatrix(ControlRot).GetScaledAxis(EAxis::Y);
+		AddMovementInput(RightVector, AxisValue.X);
+	}
 }
 
 void ADCharacter::LookMouse(const FInputActionValue& InputValue)
@@ -157,15 +136,21 @@ void ADCharacter::LookStick(const FInputActionValue& InputValue)
 	AddControllerPitchInput(Value.Y * LookPitchRate * GetWorld()->GetDeltaSeconds());
 }
 
+void ADCharacter::Interact()
+{
+	InteractionComp->PrimaryInteract();
+}
+
 void ADCharacter::SprintStart()
 {
+	ActionComp->bSprintInputBuffer = true;
 	ActionComp->StartActionByName(this, "Sprint");
 }
 
 void ADCharacter::SprintStop()
 {
+	ActionComp->bSprintInputBuffer = false;
 	ActionComp->StopActionByName(this, "Sprint");
-
 }
 
 void ADCharacter::RollStart()
@@ -186,5 +171,10 @@ void ADCharacter::BlockStart()
 void ADCharacter::BlockStop()
 {
 	ActionComp->StopActionByName(this, "Block");
+}
+
+void ADCharacter::KnockbackStart(AActor* InstigatorActor)
+{
+	ActionComp->StartActionByName(InstigatorActor, "Knockback");
 }
 

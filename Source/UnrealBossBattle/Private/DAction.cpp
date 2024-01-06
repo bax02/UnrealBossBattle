@@ -3,6 +3,7 @@
 
 #include "DAction.h"
 #include "DActionComponent.h"
+#include "DAction_Sprint.h"
 
 bool UDAction::CanStart_Implementation(AActor* Instigator)
 {
@@ -26,6 +27,11 @@ void UDAction::StartAction_Implementation(AActor* Instigator)
 	UDActionComponent* Comp = GetOwningComponent();
 	Comp->ActiveGameplayTags.AppendTags(GrantsTags);
 
+	for (FName name : CancelsNames)
+	{
+		Comp->StopActionByName(Instigator, name);
+	}
+
 	bIsRunning = true;
 }
 
@@ -37,6 +43,11 @@ void UDAction::StopAction_Implementation(AActor* Instigator)
 
 	UDActionComponent* Comp = GetOwningComponent();
 	Comp->ActiveGameplayTags.RemoveTags(GrantsTags);
+	
+	if (Comp->bSprintInputBuffer && !this->IsA(UDAction_Sprint::StaticClass()))
+	{
+		Comp->StartActionByName(Instigator, "Sprint");
+	}
 
 	bIsRunning = false;
 }

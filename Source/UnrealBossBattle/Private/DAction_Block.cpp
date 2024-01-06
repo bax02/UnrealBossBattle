@@ -8,7 +8,7 @@
 void UDAction_Block::StartAction_Implementation(AActor* Instigator)
 {
 	Super::StartAction_Implementation(Instigator);
-	ACharacter* Character = Cast<ACharacter>(Instigator);
+	Character = Cast<ACharacter>(Instigator);
 	if (Character)
 	{
 		// Play animation and sound
@@ -20,11 +20,19 @@ void UDAction_Block::StartAction_Implementation(AActor* Instigator)
 
 void UDAction_Block::StopAction_Implementation(AActor* Instigator)
 {
-	ACharacter* Character = Cast<ACharacter>(Instigator);
 	if (Character)
 	{
 		Character->StopAnimMontage(BlockAnim);
 	}
 	Super::StopAction_Implementation(Instigator);
+}
+
+void UDAction_Block::BlockHit(ACharacter* HitCharacter, UParticleSystem* HitParticles, USoundBase* HitSound)
+{
+	if (HitCharacter)
+	{
+		UGameplayStatics::SpawnSoundAttached(HitSound, HitCharacter->GetMesh());
+		UGameplayStatics::SpawnEmitterAttached(HitParticles, HitCharacter->GetMesh(), "ShieldCenter");
+	}
 }
 

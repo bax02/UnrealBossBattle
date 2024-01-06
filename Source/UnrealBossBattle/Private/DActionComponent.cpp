@@ -80,3 +80,41 @@ bool UDActionComponent::StopActionByName(AActor* Instigator, FName ActionName)
 	}
 	return false;
 }
+
+UDAction* UDActionComponent::GetAction(TSubclassOf<UDAction> ActionClass) const
+{
+	for (UDAction* Action : Actions)
+	{
+		if (Action && Action->IsA(ActionClass))
+		{
+			return Action;
+		}
+	}
+
+	return nullptr;
+}
+
+bool UDActionComponent::IsActionOfClassRunning(TSubclassOf<UDAction> ActionClass)
+{
+	for (UDAction* Action : Actions)
+	{
+		if (Action && Action->IsA(ActionClass))
+		{
+			if (Action->IsRunning())
+			{
+				return true;
+			}
+		}
+	}
+
+	return false;
+}
+
+UDActionComponent* UDActionComponent::GetActions(AActor* FromActor)
+{
+	if (FromActor)
+	{
+		return FromActor->FindComponentByClass<UDActionComponent>();
+	}
+	return nullptr;
+}

@@ -22,10 +22,16 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "Attack")
 	TObjectPtr<USoundBase> BlockingSound;
 
+	ACharacter* Character;
+
+
 public:
 
 	virtual void StartAction_Implementation(AActor* Instigator) override;
 
 	virtual void StopAction_Implementation(AActor* Instigator) override;
+
+	static void BlockHit(ACharacter* HitCharacter, UParticleSystem* HitParticles, USoundBase* HitSound);
+
 	
 };

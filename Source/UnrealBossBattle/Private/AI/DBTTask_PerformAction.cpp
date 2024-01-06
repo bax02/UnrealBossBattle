@@ -5,6 +5,12 @@
 #include "GameFramework/Character.h"
 #include "AIController.h"
 
+UDBTTask_PerformAction::UDBTTask_PerformAction()
+{
+	AnimRateScale = 1.0f;
+}
+
+
 EBTNodeResult::Type UDBTTask_PerformAction::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
 	Controller = OwnerComp.GetAIOwner();
@@ -13,7 +19,7 @@ EBTNodeResult::Type UDBTTask_PerformAction::ExecuteTask(UBehaviorTreeComponent& 
 		Character = Cast<ACharacter>(Controller->GetPawn());
 		if (Character)
 		{
-
+			AnimMontage->RateScale = AnimRateScale;
 			Character->PlayAnimMontage(AnimMontage);
 			FTimerHandle TimerHandle_AnimMontageDelay;
 			FTimerDelegate Delegate;

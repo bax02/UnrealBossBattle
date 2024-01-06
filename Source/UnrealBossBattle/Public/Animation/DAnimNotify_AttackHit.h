@@ -6,6 +6,8 @@
 #include "Animation/AnimNotifies/AnimNotify.h"
 #include "DAnimNotify_AttackHit.generated.h"
 
+class UParticleSystem;
+
 /**
  * 
  */
@@ -14,18 +16,21 @@ class UNREALBOSSBATTLE_API UDAnimNotify_AttackHit : public UAnimNotify
 {
 	GENERATED_BODY()
 
-
+protected:
 	UPROPERTY(EditAnywhere, Category = "Animation")
-	FName TraceStartSocket;
-
-	UPROPERTY(EditAnywhere, Category = "Animation")
-	FName TraceEndSocket;
+	FName TraceSocket;
 		
 	UPROPERTY(EditAnywhere, Category = "Animation")
-	float CapsuleRadius;
+	float SphereRadius;
 
 	UPROPERTY(EditAnywhere, Category = "Animation")
-	float CapsuleHalfHeight;
+	FVector LocationOffset;
+
+	UPROPERTY(EditAnywhere, Category = "Particles")
+	UParticleSystem* HitParticles;
+
+	UPROPERTY(EditAnywhere, Category = "Sound")
+	TObjectPtr<USoundBase> HitSound;
 
 public:
 	void Notify(class USkeletalMeshComponent* MeshComp, class UAnimSequenceBase* Animation, const FAnimNotifyEventReference& EventReference) override;

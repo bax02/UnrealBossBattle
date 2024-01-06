@@ -6,6 +6,8 @@
 #include "DAction.h"
 #include "DAction_Sprint.generated.h"
 
+class UDCharacterAttributeComponent;
+
 /**
  * 
  */
@@ -20,12 +22,15 @@ protected:
 	UPROPERTY(EditAnywhere, Category="Targeting")
 	float BonusSpeed = 200;
 
+	UDCharacterAttributeComponent* CharacterAttributeComp;
+
 
 public:
 
 	virtual void StartAction_Implementation(AActor* Instigator) override;
 
 	virtual void StopAction_Implementation(AActor* Instigator) override;
+
 
 	
 };

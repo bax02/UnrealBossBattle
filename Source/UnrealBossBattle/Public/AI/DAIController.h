@@ -7,6 +7,7 @@
 #include "DAIController.generated.h"
 
 class UBehaviorTree;
+class UUserWidget;
 
 /**
  * 
@@ -21,5 +22,13 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "AI")
 	UBehaviorTree* BehaviorTree;
 
-	virtual void BeginPlay() override;	
+	virtual void BeginPlay() override;
+
+	void OnPossess(APawn* InPawn) override;
+
+	UPROPERTY(EditDefaultsOnly, Category = "UI")
+	TSubclassOf<UUserWidget> BossWidgetClass;
+
+	UPROPERTY()
+	UUserWidget* BossWidgetInstance;
 };

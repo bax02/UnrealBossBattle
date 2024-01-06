@@ -17,7 +17,6 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Attributes")
 	float Health;
-	
 
 public:	
 	// Sets default values for this component's properties
@@ -31,5 +30,5 @@ public:
 
 	UPROPERTY(BlueprintAssignable)
 	FOnHealthChanged OnHealthChanged;
-		
+
 };

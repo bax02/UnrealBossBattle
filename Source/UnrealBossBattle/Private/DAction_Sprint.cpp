@@ -3,14 +3,19 @@
 
 #include "DAction_Sprint.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "DCharacterAttributeComponent.h"
 
 void UDAction_Sprint::StartAction_Implementation(AActor* Instigator)
 {
 	Super::StartAction_Implementation(Instigator);
 	UCharacterMovementComponent* MovementComp = Instigator->GetComponentByClass<UCharacterMovementComponent>();
+	CharacterAttributeComp = Instigator->GetComponentByClass<UDCharacterAttributeComponent>();
 	if (ensure(MovementComp))
 	{
-		MovementComp->MaxWalkSpeed = MovementComp->MaxWalkSpeed + BonusSpeed;
+		if (ensure(CharacterAttributeComp))
+		{
+			MovementComp->MaxWalkSpeed = MovementComp->MaxWalkSpeed + BonusSpeed;
+		}
 	}
 }
 
@@ -20,6 +25,7 @@ void UDAction_Sprint::StopAction_Implementation(AActor* Instigator)
 	UCharacterMovementComponent* MovementComp = Instigator->GetComponentByClass<UCharacterMovementComponent>();
 	if (ensure(MovementComp))
 	{
+
 		MovementComp->MaxWalkSpeed = MovementComp->MaxWalkSpeed - BonusSpeed;
 	}
 }

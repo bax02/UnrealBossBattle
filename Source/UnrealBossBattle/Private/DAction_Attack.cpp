@@ -4,6 +4,7 @@
 #include "DAction_Attack.h"
 #include "GameFramework/Character.h"
 #include "DActionComponent.h"
+#include "DCharacterAttributeComponent.h"
 
 bool UDAction_Attack::CanStart_Implementation(AActor* Instigator)
 {
@@ -13,6 +14,16 @@ bool UDAction_Attack::CanStart_Implementation(AActor* Instigator)
 	{
 		return false;
 	}
+	Character = Cast<ACharacter>(Instigator);
+	CharacterAttributeComp = UDCharacterAttributeComponent::GetCharacterAttributes(Character);
+	
+	// Try and reduce Stamina
+
+	if (!IsRunning())
+	{
+		return CharacterAttributeComp->ApplyStaminaChange(-6.f, 1.5f);
+	}
+
 	return true;
 }
 
@@ -21,12 +32,11 @@ void UDAction_Attack::StartAction_Implementation(AActor* Instigator)
 	if (!IsRunning())
 	{
 		Super::StartAction_Implementation(Instigator);
-		ACharacter* Character = Cast<ACharacter>(Instigator);
+
 		if (Character)
 		{
-			// Play animation and sound
+			// Play animation
 			Character->PlayAnimMontage(AttackAnim);
-			//UGameplayStatics::SpawnSoundAttached(AttackingSound, Character->GetMesh());
 		}
 	}
 	else
@@ -35,23 +45,30 @@ void UDAction_Attack::StartAction_Implementation(AActor* Instigator)
 	}
 }
 
-void UDAction_Attack::StopAction_Implementation(AActor* Instigator)
+void UDAction_Attack::TryStopAction(AActor* Instigator)
 {
 	if (!bContinueCombo || comboCount == 2)
 	{
-		Super::StopAction_Implementation(Instigator);
-		ACharacter* Character = Cast<ACharacter>(Instigator);
-		if (Character)
-		{
-			Character->StopAnimMontage(AttackAnim);
-		}
-		comboCount = 0;
-		bContinueCombo = false;
-
+		StopAction_Implementation(Instigator);
 	}
 	else {
+		// Reduce Stamina
+		if (CharacterAttributeComp)
+		{
+			CharacterAttributeComp->ApplyStaminaChange(-6.f, 1.5f);
+		}
 		comboCount++;
 		bContinueCombo = false;
 	}
+}
 
+void UDAction_Attack::StopAction_Implementation(AActor* Instigator)
+{
+	Super::StopAction_Implementation(Instigator);
+	if (Character)
+	{
+		Character->StopAnimMontage(AttackAnim);
+	}
+	comboCount = 0;
+	bContinueCombo = false;
 }

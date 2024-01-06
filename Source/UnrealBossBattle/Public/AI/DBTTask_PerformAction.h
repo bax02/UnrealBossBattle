@@ -24,6 +24,9 @@ protected:
 	void AnimMontageDelay_Elapsed(UBehaviorTreeComponent* OwnerComp);
 
 	UPROPERTY(EditAnywhere, Category = "Animation")
+	float AnimRateScale;
+
+	UPROPERTY(EditAnywhere, Category = "Animation")
 	float TransitionTime;
 
 	AAIController* Controller;
@@ -32,5 +35,7 @@ protected:
 
 public:
 	EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) override;
+
+	UDBTTask_PerformAction();
 
 };

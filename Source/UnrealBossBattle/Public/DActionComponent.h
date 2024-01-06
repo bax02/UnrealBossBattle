@@ -28,6 +28,17 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Actions")
 	bool StopActionByName(AActor* Instigator, FName ActionName);
+
+	UFUNCTION(BlueprintCallable, Category = "Actions")
+	UDAction* GetAction(TSubclassOf<UDAction> ActionClass) const;
+
+	UFUNCTION(BlueprintCallable, Category = "Actions")
+	bool IsActionOfClassRunning(TSubclassOf<UDAction> ActionClass);
+
+	UFUNCTION(BlueprintCallable, Category = "Attributes")
+	static UDActionComponent* GetActions(AActor* FromActor);
+
+	bool bSprintInputBuffer;
 	
 	
 	UDActionComponent();

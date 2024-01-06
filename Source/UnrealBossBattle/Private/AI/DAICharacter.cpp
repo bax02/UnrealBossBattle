@@ -1,11 +1,13 @@
 #include "AI/DAICharacter.h"
 #include "DActionComponent.h"
-#include "Components/CapsuleComponent.h"
+//#include "Components/CapsuleComponent.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "DrawDebugHelpers.h"
 #include "DAttributeComponent.h"
 #include "Particles/ParticleSystemComponent.h"
 #include "Kismet/GameplayStatics.h"
+#include "Kismet/KismetSystemLibrary.h"
+#include "DCapsuleHitboxComponent.h"
 
 // Sets default values
 ADAICharacter::ADAICharacter()
@@ -15,48 +17,18 @@ ADAICharacter::ADAICharacter()
 
 	AttributeComp = CreateDefaultSubobject<UDAttributeComponent>("AttributeComp");
 
-	CapsuleComp = CreateDefaultSubobject<UCapsuleComponent>("CapsuleComp");
-	CapsuleComp->SetupAttachment(GetMesh(), "HammerCenter");
-	CapsuleComp->ComponentTags.Add("WeaponCollision");
-
 	ParticleComp = CreateDefaultSubobject<UParticleSystemComponent>("ParticleComp");
-	ParticleComp->SetupAttachment(GetMesh(), "Root");
+	ParticleComp->SetupAttachment(GetMesh(), "pelvis");
+
+	HitboxComp = CreateDefaultSubobject<UDCapsuleHitboxComponent>("HitboxComp");
+	HitboxComp->SetupAttachment(GetMesh(), "HammerCenter");
+	HitboxComp->ComponentTags.Add("WeaponCollision");
 }
 
 // Called when the game starts or when spawned
 void ADAICharacter::BeginPlay()
 {
 	Super::BeginPlay();
-	
-}
-
-void ADAICharacter::PostInitializeComponents()
-{
-	Super::PostInitializeComponents();
-
-	CapsuleComp->OnComponentBeginOverlap.AddDynamic(this, &ADAICharacter::OnActorOverlap);
-}
-
-void ADAICharacter::OnActorOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
-{
-	if (OtherActor && OtherActor != this)
-	{
-		DrawDebugCapsule(GetWorld(), CapsuleComp->GetComponentLocation(), CapsuleComp->GetScaledCapsuleHalfHeight(),
-			CapsuleComp->GetScaledCapsuleRadius(), CapsuleComp->GetComponentRotation().Quaternion(), FColor::Red, false, 2.0f);
-		CapsuleComp->SetGenerateOverlapEvents(false);
-
-		UGameplayStatics::SpawnEmitterAttached(HitParticles, GetMesh(), "HammerCenter", FVector::ZeroVector,
-			FRotator::ZeroRotator, EAttachLocation::SnapToTarget, true, EPSCPoolMethod::AutoRelease);
-
-		UGameplayStatics::SpawnSoundAttached(HitSound, CapsuleComp);
-
-		UDAttributeComponent* HitAttributeComp = UDAttributeComponent::GetAttributes(OtherActor);
-
-		if (HitAttributeComp)
-		{
-			HitAttributeComp->ApplyHealthChange(-20.f);
-		}
-	}
 }
 
 // Called every frame

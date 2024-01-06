@@ -30,4 +30,3 @@ UDAttributeComponent* UDAttributeComponent::GetAttributes(AActor* FromActor)
 	}
 	return nullptr;
 }
-

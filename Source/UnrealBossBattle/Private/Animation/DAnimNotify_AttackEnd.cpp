@@ -4,6 +4,7 @@
 #include "Animation/DAnimNotify_AttackEnd.h"
 #include "DCharacter.h"
 #include "DActionComponent.h"
+#include "DAction_Attack.h"
 
 void UDAnimNotify_AttackEnd::Notify(class USkeletalMeshComponent* MeshComp, class UAnimSequenceBase* Animation, const FAnimNotifyEventReference& EventReference)
 {
@@ -14,7 +15,14 @@ void UDAnimNotify_AttackEnd::Notify(class USkeletalMeshComponent* MeshComp, clas
 		UDActionComponent* ActionComp = Character->GetComponentByClass<UDActionComponent>();
 		if (ActionComp)
 		{
-			ActionComp->StopActionByName(Character, "Attack");
+			UDAction_Attack* AttackAction = Cast<UDAction_Attack>(ActionComp->GetAction(UDAction_Attack::StaticClass()));
+			if (AttackAction)
+			{
+				if (AttackAction->IsRunning())
+				{
+					AttackAction->TryStopAction(Character);
+				}
+			}
 		}
 	}
 }

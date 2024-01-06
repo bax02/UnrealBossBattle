@@ -6,6 +6,9 @@
 #include "DAction.h"
 #include "DAction_Roll.generated.h"
 
+class ACharacter;
+class UDCharacterAttributeComponent;
+
 /**
  * 
  */
@@ -21,16 +24,31 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "Roll")
 	float RollAnimDelay;
 
+	UPROPERTY(EditDefaultsOnly, Category = "Roll")
+	float StaminaCost;
+
 	UFUNCTION()
 	void RollDelay_Elapsed(ACharacter* InstigatorCharacter);
 
-	UPROPERTY(EditAnywhere, Category = "Attack")
+	UPROPERTY(EditAnywhere, Category = "Roll")
 	TObjectPtr<USoundBase> RollingSound;
+
+	UPROPERTY()
+	ACharacter* Character;
+
+	UPROPERTY()
+	UDCharacterAttributeComponent* CharacterAttributeComp;
+
 
 
 public:
 
+	virtual bool CanStart_Implementation(AActor* Instigator) override;
+
 	virtual void StartAction_Implementation(AActor* Instigator) override;
+
+	virtual void StopAction_Implementation(AActor* Instigator) override;
+
 
 	UDAction_Roll();
 	

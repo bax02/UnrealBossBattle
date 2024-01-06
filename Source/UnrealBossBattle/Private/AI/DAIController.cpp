@@ -4,6 +4,7 @@
 #include "AI/DAIController.h"
 #include "Kismet/GameplayStatics.h"
 #include "BehaviorTree/BlackboardComponent.h"
+#include "Blueprint/UserWidget.h"
 
 void ADAIController::BeginPlay()
 {
@@ -16,4 +17,11 @@ void ADAIController::BeginPlay()
 	{
 		GetBlackboardComponent()->SetValueAsObject("TargetActor", MyPawn);
 	}
+}
+
+void ADAIController::OnPossess(APawn* InPawn)
+{
+	Super::OnPossess(InPawn);
+	BossWidgetInstance = CreateWidget<UUserWidget>(GetWorld(), BossWidgetClass);
+	BossWidgetInstance->AddToViewport();
 }

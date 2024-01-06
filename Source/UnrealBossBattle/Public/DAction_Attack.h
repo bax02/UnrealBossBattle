@@ -6,6 +6,10 @@
 #include "DAction.h"
 #include "DAction_Attack.generated.h"
 
+class ACharacter;
+class UDCharacterAttributeComponent;
+
+
 /**
  * 
  */
@@ -22,11 +26,17 @@ protected:
 
 	int comboCount = 0;
 
+	ACharacter* Character;
+
+	UDCharacterAttributeComponent* CharacterAttributeComp;
+
 public:
 
 	virtual bool CanStart_Implementation(AActor* Instigator) override;
 
 	virtual void StartAction_Implementation(AActor* Instigator) override;
+
+	void TryStopAction(AActor* Instigator);
 
 	virtual void StopAction_Implementation(AActor* Instigator) override;
 	

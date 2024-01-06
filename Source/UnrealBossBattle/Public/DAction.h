@@ -26,6 +26,9 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "Tags")
 	FGameplayTagContainer BlockedTags;
 
+	UPROPERTY(EditDefaultsOnly, Category = "Tags")
+	TArray<FName> CancelsNames;
+
 	bool bIsRunning;
 
 public:

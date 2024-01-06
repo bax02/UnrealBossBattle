@@ -13,8 +13,9 @@ class UInputAction;
 class USpringArmComponent;
 class UCameraComponent;
 class UDActionComponent;
-class UDAttributeComponent;
-class UCapsuleComponent;
+class UDInteractionComponent;
+class UDCharacterAttributeComponent;
+class UDCapsuleHitboxComponent;
 
 UCLASS()
 class UNREALBOSSBATTLE_API ADCharacter : public ACharacter
@@ -29,21 +30,20 @@ protected:
 	UPROPERTY(VisibleAnywhere)
 	UCameraComponent* CameraComp;
 
+	// Interactions
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
+	UDInteractionComponent* InteractionComp;
+
 	// Actions
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	UDActionComponent* ActionComp;
 
 	// Attributes
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
-	UDAttributeComponent* AttributeComp;
+	UDCharacterAttributeComponent* CharacterAttributeComp;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
-	UCapsuleComponent* CapsuleComp;
-
-	UFUNCTION()
-	void OnActorOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
-
-	virtual void PostInitializeComponents() override;
+	UDCapsuleHitboxComponent* HitboxComp;
 
 	UPROPERTY(EditAnywhere, Category = "Sound")
 	TObjectPtr<USoundBase> HitSound;
@@ -51,6 +51,9 @@ protected:
 	// Enhanced Input
 	UPROPERTY(EditDefaultsOnly, Category="Input")
 	UInputMappingContext* DefaultInputMapping;
+
+	UPROPERTY(EditDefaultsOnly, Category="Input")
+	UInputAction* Input_Interact;
 
 	UPROPERTY(EditDefaultsOnly, Category="Input")
 	UInputAction* Input_Move;
@@ -79,6 +82,8 @@ protected:
 
 	void LookStick(const FInputActionValue& InputValue);
 
+	void Interact();
+
 	void SprintStart();
 
 	void SprintStop();
@@ -92,6 +97,9 @@ protected:
 	void BlockStop();
 
 public:
+
+	bool bCanMove;
+
 	// Sets default values for this character's properties
 	ADCharacter();
 
@@ -100,5 +108,7 @@ public:
 
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+
+	void KnockbackStart(AActor* InstigatorActor);
 
 };

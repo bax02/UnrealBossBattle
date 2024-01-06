@@ -4,6 +4,11 @@
 #include "Animation/DAnimNotify_AttackHit.h"
 #include "DrawDebugHelpers.h"
 #include "GameFramework/Character.h"
+#include "DAttributeComponent.h"
+#include "DActionComponent.h"
+#include "DAction_Roll.h"
+#include "Kismet/GameplayStatics.h"
+#include "DCharacter.h"
 
 void UDAnimNotify_AttackHit::Notify(class USkeletalMeshComponent* MeshComp, class UAnimSequenceBase* Animation, const FAnimNotifyEventReference& EventReference)
 {
@@ -12,12 +17,12 @@ void UDAnimNotify_AttackHit::Notify(class USkeletalMeshComponent* MeshComp, clas
 	ACharacter* Character = Cast<ACharacter>(MeshComp->GetOwner());
 	if (Character)
 	{
-		FVector TraceStart = Character->GetMesh()->GetSocketLocation(TraceStartSocket);
-		FVector TraceEnd = Character->GetMesh()->GetSocketLocation(TraceEndSocket);
+		FTransform TraceTransform = Character->GetMesh()->GetSocketTransform(TraceSocket);
+		FVector TracePoint = TraceTransform.TransformPosition(LocationOffset);
 
 		FCollisionShape Shape;
 
-		Shape.SetCapsule(CapsuleRadius, CapsuleHalfHeight);
+		Shape.SetSphere(SphereRadius);
 
 		FCollisionObjectQueryParams ObjParams;
 		ObjParams.AddObjectTypesToQuery(ECC_Pawn);
@@ -25,21 +30,32 @@ void UDAnimNotify_AttackHit::Notify(class USkeletalMeshComponent* MeshComp, clas
 		FCollisionQueryParams Params;
 		Params.AddIgnoredActor(Character);
 
-		DrawDebugPoint(Character->GetWorld(), TraceStart, 8, FColor::Green, false, 2.0f);
-		DrawDebugPoint(Character->GetWorld(), TraceEnd, 8, FColor::Green, false, 2.0f);
-		DrawDebugLine(Character->GetWorld(), TraceStart, TraceEnd, FColor::Red, false, 2.0f);
-		FVector Center = ((TraceEnd - TraceStart).GetSafeNormal() * CapsuleHalfHeight) + TraceStart;
-		FVector Inter = TraceEnd - TraceStart;
-		Inter.Normalize();
-
-		FQuat RotQuat = Inter.ToOrientationQuat() * FQuat::MakeFromRotator(FRotator(90, 0, 0));
-
-		DrawDebugCapsule(Character->GetWorld(), Center, Shape.GetCapsuleHalfHeight(), Shape.GetCapsuleRadius(), RotQuat, FColor::Purple, false, 2.0f);
 		FHitResult Hit;
-		if (Character->GetWorld()->SweepSingleByObjectType(Hit, Center, Center, RotQuat, ObjParams, Shape, Params))
+		if (Character->GetWorld()->SweepSingleByObjectType(Hit, TracePoint, TracePoint + FVector(0.1, 0.1, 0.1), FQuat::Identity, ObjParams, Shape, Params))
 		{
-			FString Msg = FString::Printf(TEXT("Hit"));
-			GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Blue, Msg);
+			if (UDActionComponent::GetActions(Hit.GetActor())->IsActionOfClassRunning(UDAction_Roll::StaticClass()))
+			{
+				return;
+			}
+			DrawDebugSphere(Character->GetWorld(), TracePoint, SphereRadius, 16, FColor::Purple, false, 2.0f);
+			// Spawn blood emitter
+			FRotator Rotator = (Character->GetActorLocation() - Hit.ImpactPoint).ToOrientationRotator();
+			DrawDebugPoint(Character->GetWorld(), Hit.ImpactPoint, 10.f, FColor::Red, false, 2.f, 0);
+			UGameplayStatics::SpawnEmitterAtLocation(Character, HitParticles, Hit.ImpactPoint, Rotator, FVector(3, 3, 3), true, EPSCPoolMethod::AutoRelease, true);
+
+			// Get the attribute component of the hit actor
+			UDAttributeComponent* HitAttributeComp = UDAttributeComponent::GetAttributes(Hit.GetActor());
+
+			if (HitAttributeComp)
+			{
+				// Update the hit actors health
+				HitAttributeComp->ApplyHealthChange(-20.f);
+			}
+			ADCharacter* HitCharacter = Cast<ADCharacter>(Hit.GetActor());
+			if (HitCharacter)
+			{
+				HitCharacter->KnockbackStart(Character);
+			}
 		}
 
 	}
