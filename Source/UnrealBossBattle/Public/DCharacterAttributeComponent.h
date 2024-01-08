@@ -11,6 +11,9 @@ class UDActionComponent;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_FourParams(FOnStaminaChanged, AActor*, InstigatorActor, UDCharacterAttributeComponent*, OwningComp, float, NewStamina, float, Delta);
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnPotionChanged, UDCharacterAttributeComponent*, OwningComp, int, NewPotions);
+
+
 /**
  * 
  */
@@ -25,6 +28,11 @@ protected:
 	float MaxStamina;
 
 	float Stamina;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Attributes")
+	int MaxPotions;
+
+	int Potions;
 
 	FTimerHandle TimerHandle_UpdateStamina;
 
@@ -42,8 +50,14 @@ public:
 	UFUNCTION()
 	void UpdateStamina();
 
+	UFUNCTION(BlueprintCallable, Category = "Attributes")
+	bool ApplyPotionChange(int Delta);
+
 	UPROPERTY(BlueprintAssignable)
 	FOnStaminaChanged OnStaminaChanged;
+
+	UPROPERTY(BlueprintAssignable)
+	FOnPotionChanged OnPotionChanged;
 
 	UFUNCTION(BlueprintCallable, Category = "Attributes")
 	static UDCharacterAttributeComponent* GetCharacterAttributes(AActor* FromActor);

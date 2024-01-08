@@ -8,7 +8,7 @@
 
 class ULevelSequence;
 class ULevelSequencePlayer;
-class APawn;
+class ADDoor;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnGameStart);
 
@@ -29,6 +29,39 @@ protected:
 
 	ULevelSequencePlayer* LevelSequencePlayer;
 
+	UPROPERTY(EditDefaultsOnly, Category = "UI")
+	TSubclassOf<UUserWidget> DeathWidgetClass;
+
+	UPROPERTY(EditDefaultsOnly, Category = "UI")
+	TSubclassOf<UUserWidget> VictoryWidgetClass;
+
+	UPROPERTY(EditAnywhere, Category = "Music")
+	TObjectPtr<USoundBase> MainMenuMusic;
+
+	UPROPERTY(EditAnywhere, Category = "Music")
+	TObjectPtr<USoundBase> BattleMusic;
+
+	UPROPERTY(EditAnywhere, Category = "Music")
+	TObjectPtr<USoundBase> SandAmbience;
+
+	UPROPERTY()
+	UAudioComponent* AmbienceInstance;
+
+	UPROPERTY()
+	UAudioComponent* MusicInstance;
+
+	UPROPERTY()
+	UUserWidget* WidgetInstance;
+
+	UFUNCTION()
+	void DeathDelay_Elapsed();
+
+	UPROPERTY(EditAnywhere, Category = "DespawnInteractable")
+	TSoftObjectPtr<ADDoor> DoorInstance;
+
+	UFUNCTION()
+	void StopAmbience();
+
 public:
 
 	virtual void StartPlay() override;
@@ -41,6 +74,8 @@ public:
 	void StartGame();
 	
 	void StartBattle(AActor* PlayerActor);
+
+	void OnActorKilled(AActor* VictimActor, AActor* InstigatorActor);
 
 	ADGameModeBase();
 

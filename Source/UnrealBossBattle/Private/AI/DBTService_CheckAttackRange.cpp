@@ -5,6 +5,12 @@
 #include "BehaviorTree/BlackboardComponent.h"
 #include "AIController.h"
 
+
+UDBTService_CheckAttackRange::UDBTService_CheckAttackRange()
+{
+	Distance = 325.f;
+}
+
 void UDBTService_CheckAttackRange::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds)
 {
 	Super::TickNode(OwnerComp, NodeMemory, DeltaSeconds);
@@ -25,7 +31,7 @@ void UDBTService_CheckAttackRange::TickNode(UBehaviorTreeComponent& OwnerComp, u
 				{
 					float DistanceTo = FVector::Distance(TargetActor->GetActorLocation(), AIPawn->GetActorLocation());
 					
-					bool bWithinRange = DistanceTo < 300.f;
+					bool bWithinRange = DistanceTo < Distance;
 
 					BlackboardComp->SetValueAsBool(AttackRangeKey.SelectedKeyName, bWithinRange);
 				}

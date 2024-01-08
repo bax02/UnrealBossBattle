@@ -35,11 +35,9 @@ void ADTutorialSpawner::BeginPlay()
 
 void ADTutorialSpawner::SpawnUI()
 {
-	UE_LOG(LogTemp, Log, TEXT("Running SpawnUI"));
 	DefaultWidgetInstance = CreateWidget<UDWorldUserWidget>(GetWorld(), DefaultWidgetClass);
 	if (DefaultWidgetInstance)
 	{
-		UE_LOG(LogTemp, Log, TEXT("Adding UI To viewport"));
 		DefaultWidgetInstance->AttachedActor = this;
 		DefaultWidgetInstance->AddToViewport();
 	}

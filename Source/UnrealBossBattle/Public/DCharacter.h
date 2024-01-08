@@ -48,6 +48,10 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "Sound")
 	TObjectPtr<USoundBase> HitSound;
 
+	// Animations
+	UPROPERTY(EditAnywhere, Category = "Death")
+	TObjectPtr<UAnimMontage> DeathAnim;
+
 	// Enhanced Input
 	UPROPERTY(EditDefaultsOnly, Category="Input")
 	UInputMappingContext* DefaultInputMapping;
@@ -76,6 +80,10 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category="Input")
 	UInputAction* Input_Block;
 
+	UPROPERTY(EditDefaultsOnly, Category="Input")
+	UInputAction* Input_Heal;
+
+
 	void Move(const FInputActionInstance& Instance);
 
 	void LookMouse(const FInputActionValue& InputValue);
@@ -96,6 +104,7 @@ protected:
 
 	void BlockStop();
 
+	void HealStart();
 public:
 
 	bool bCanMove;
@@ -110,5 +119,7 @@ public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 	void KnockbackStart(AActor* InstigatorActor);
+
+	void PlayDeathAnim();
 
 };

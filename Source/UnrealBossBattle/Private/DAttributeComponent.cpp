@@ -2,6 +2,8 @@
 
 
 #include "DAttributeComponent.h"
+#include "GameFramework/Character.h"
+#include "DGameModeBase.h"
 
 // Sets default values for this component's properties
 UDAttributeComponent::UDAttributeComponent()
@@ -10,14 +12,26 @@ UDAttributeComponent::UDAttributeComponent()
 	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = true;
 
-	Health = 100;
+	MaxHealth = 100.f;
+	Health = 100.f;
 }
 
-bool UDAttributeComponent::ApplyHealthChange(float Delta)
+bool UDAttributeComponent::ApplyHealthChange(float Delta, AActor* InstigatorActor)
 {
-	Health += Delta;
+
+	Health = FMath::Clamp(Health + Delta, 0.0f, MaxHealth);
 
 	OnHealthChanged.Broadcast(nullptr, this, Health, Delta);
+
+	if (Health == 0.0f)
+	{
+		ADGameModeBase* GameMode = GetWorld()->GetAuthGameMode<ADGameModeBase>();
+		if (GameMode)
+		{
+			GameMode->OnActorKilled(GetOwner(), InstigatorActor);
+		}
+		return false;
+	}
 
 	return true;
 }

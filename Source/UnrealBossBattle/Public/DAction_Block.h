@@ -19,11 +19,11 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "Block")
 	TObjectPtr<UAnimMontage> BlockAnim;
 
-	UPROPERTY(EditAnywhere, Category = "Attack")
+	UPROPERTY(EditAnywhere, Category = "Block")
 	TObjectPtr<USoundBase> BlockingSound;
 
+	UPROPERTY()
 	ACharacter* Character;
-
 
 public:
 
@@ -31,7 +31,7 @@ public:
 
 	virtual void StopAction_Implementation(AActor* Instigator) override;
 
-	static void BlockHit(ACharacter* HitCharacter, UParticleSystem* HitParticles, USoundBase* HitSound);
+	static bool BlockHit(ACharacter* HitCharacter, UParticleSystem* HitParticles, USoundBase* HitSound);
 
 	
 };

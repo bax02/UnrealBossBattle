@@ -23,6 +23,9 @@ void UDAction_Knockback::StartAction_Implementation(AActor* Instigator)
 	{
 		// Lock movement while in air
 		Character->bCanMove = false;
+		// Set rotation towards the instigator actor
+		FVector RotationVector = (Instigator->GetActorLocation() - Character->GetActorLocation()).GetSafeNormal();
+		Character->SetActorRotation(RotationVector.Rotation(), ETeleportType::None);
 		// Play animation and apply impulse
 		FVector LaunchForce = (Character->GetActorLocation() - Instigator->GetActorLocation()).GetSafeNormal() * ImpulseStrength;
 		LaunchForce.Z = ZLaunchForce;

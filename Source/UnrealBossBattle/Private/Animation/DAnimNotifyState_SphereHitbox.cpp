@@ -48,14 +48,14 @@ void UDAnimNotifyState_SphereHitbox::UpdateHitbox()
 			// We have hit the hit actor while they are not immune, cancel timer
 			Character->GetWorld()->GetTimerManager().ClearTimer(TimerHandle_UpdateHitbox);
 
-			DrawDebugSphere(Character->GetWorld(), TracePoint, SphereRadius, 16, FColor::Purple, false, 2.0f);
+			//DrawDebugSphere(Character->GetWorld(), TracePoint, SphereRadius, 16, FColor::Purple, false, 2.0f);
 
 			//PLay Hit sound
 			UGameplayStatics::SpawnSoundAtLocation(Character, HitSound, Hit.ImpactPoint);
 
 			// Spawn blood emitter
 			FRotator Rotator = (Character->GetActorLocation() - Hit.ImpactPoint).ToOrientationRotator();
-			DrawDebugPoint(Character->GetWorld(), Hit.ImpactPoint, 10.f, FColor::Red, false, 2.f, 0);
+			//DrawDebugPoint(Character->GetWorld(), Hit.ImpactPoint, 10.f, FColor::Red, false, 2.f, 0);
 			UGameplayStatics::SpawnEmitterAtLocation(Character, HitParticles, Hit.ImpactPoint, Rotator, FVector(3, 3, 3), true, EPSCPoolMethod::AutoRelease, true);
 
 			// Get the attribute component of the hit actor
@@ -64,13 +64,15 @@ void UDAnimNotifyState_SphereHitbox::UpdateHitbox()
 			if (HitAttributeComp)
 			{
 				// Update the hit actors health
-				HitAttributeComp->ApplyHealthChange(-20.f);
-			}
-			ADCharacter* HitCharacter = Cast<ADCharacter>(Hit.GetActor());
-			if (HitCharacter)
-			{
-				// Apply knockback to the hit actor
-				HitCharacter->KnockbackStart(Character);
+				if (HitAttributeComp->ApplyHealthChange(-20.f, Character))
+				{
+					ADCharacter* HitCharacter = Cast<ADCharacter>(Hit.GetActor());
+
+					if (HitCharacter)
+					{
+						HitCharacter->KnockbackStart(Character);
+					}
+				}
 			}
 		}
 	}

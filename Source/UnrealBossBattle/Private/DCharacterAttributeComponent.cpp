@@ -10,6 +10,9 @@ UDCharacterAttributeComponent::UDCharacterAttributeComponent()
 {
 	MaxStamina = 75;
 	Stamina = MaxStamina;
+
+	MaxPotions = 4;
+	Potions = MaxPotions;
 }
 
 void UDCharacterAttributeComponent::BeginPlay()
@@ -63,6 +66,20 @@ bool UDCharacterAttributeComponent::ApplyStaminaChange(float Delta, float Cooldo
 	{
 		GetWorld()->GetTimerManager().SetTimer(TimerHandle_StaminaCooldown, Cooldown, false);
 	}
+
+	return true;
+}
+
+bool UDCharacterAttributeComponent::ApplyPotionChange(int Delta)
+{
+	if (Potions + Delta < 0)
+	{
+		return false;
+	}
+
+	Potions = FMath::Clamp(Potions + Delta, 0, MaxPotions);
+
+	OnPotionChanged.Broadcast(this, Potions);
 
 	return true;
 }

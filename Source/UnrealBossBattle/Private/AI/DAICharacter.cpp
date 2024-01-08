@@ -1,6 +1,5 @@
 #include "AI/DAICharacter.h"
 #include "DActionComponent.h"
-//#include "Components/CapsuleComponent.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "DrawDebugHelpers.h"
 #include "DAttributeComponent.h"
@@ -36,4 +35,11 @@ void ADAICharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+}
+
+void ADAICharacter::PlayDeathAnim()
+{
+	GetCapsuleComponent()->SetCollisionResponseToChannel(ECC_Pawn, ECR_Ignore);
+	GetMesh()->SetGenerateOverlapEvents(false);
+	PlayAnimMontage(DeathAnim);
 }

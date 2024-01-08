@@ -49,7 +49,7 @@ void UDAnimNotify_AttackHit::Notify(class USkeletalMeshComponent* MeshComp, clas
 			if (HitAttributeComp)
 			{
 				// Update the hit actors health
-				HitAttributeComp->ApplyHealthChange(-20.f);
+				HitAttributeComp->ApplyHealthChange(-20.f, Character);
 			}
 			ADCharacter* HitCharacter = Cast<ADCharacter>(Hit.GetActor());
 			if (HitCharacter)

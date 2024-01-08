@@ -11,10 +11,13 @@
 #include "DAction_Roll.h"
 #include "DAction_Block.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(DCapsuleHitboxComponent)
+
 UDCapsuleHitboxComponent::UDCapsuleHitboxComponent()
 {
 	OwningCharacter = Cast<ACharacter>(GetOwner());
 	ensure(OwningCharacter);
+	Damage = 20.0f;
 }
 
 void UDCapsuleHitboxComponent::BeginPlay()
@@ -36,11 +39,18 @@ void UDCapsuleHitboxComponent::OnOverlap(UPrimitiveComponent* OverlappedComponen
 
 		if (Character && UDActionComponent::GetActions(Character)->IsActionOfClassRunning(UDAction_Block::StaticClass()))
 		{
-			UDAction_Block::BlockHit(Character, BlockParticles, BlockSound);
-			return;
+			float HitActorRotation = Character->GetActorRotation().Clamp().Yaw - 180.f;
+			float OwningActorRotation = OwningCharacter->GetActorRotation().Clamp().Yaw;
+			// If the Hit Actor is facing the Owning Actor within 60 degrees then block
+			if (FMath::Abs(HitActorRotation - OwningActorRotation) < 60.f)
+			{
+				if (UDAction_Block::BlockHit(Character, BlockParticles, BlockSound))
+				{
+					// We did not have enough stamina to block
+					return;
+				}
+			}
 		}
-		DrawDebugCapsule(GetWorld(), GetComponentLocation(), GetScaledCapsuleHalfHeight(),
-			GetScaledCapsuleRadius(),GetComponentRotation().Quaternion(), FColor::Red, false, 2.0f);
 
 		// Play the hit sound
 		UGameplayStatics::SpawnSoundAttached(HitSound, this);
@@ -58,12 +68,6 @@ void UDCapsuleHitboxComponent::OnOverlap(UPrimitiveComponent* OverlappedComponen
 		FHitResult Hit;
 		if (GetWorld()->SweepSingleByObjectType(Hit, GetComponentLocation(), GetComponentLocation() + FVector(0.1, 0.1, 0.1), GetComponentRotation().Quaternion(), ObjParams, Shape, Params))
 		{
-			//FRotator Rotator = (OwningCharacter->GetActorLocation() - Hit.ImpactPoint).ToOrientationRotator();
-			//Rotator.Pitch = -80;
-			//UE_LOG(LogTemp, Log, TEXT("Rotator: %s"), *Rotator.ToString());
-			//DrawDebugPoint(GetWorld(), Hit.ImpactPoint, 10.f, FColor::Green, false, 2.f, 0);
-			//DrawDebugCoordinateSystem(GetWorld(), Hit.ImpactPoint, GetComponentRotation(), 50.f, false, 2.f, 0);
-			// Spawn particle effect at the location of the hit and with the rotation facing away form the hit actor
 			UGameplayStatics::SpawnEmitterAtLocation(OwningCharacter, HitParticles, Hit.ImpactPoint, GetComponentRotation(), FVector(2.2, 2.2, 2.2), true, EPSCPoolMethod::AutoRelease, true);
 
 		}
@@ -74,13 +78,22 @@ void UDCapsuleHitboxComponent::OnOverlap(UPrimitiveComponent* OverlappedComponen
 		if (HitAttributeComp)
 		{
 			// Update the hit actors health
-			HitAttributeComp->ApplyHealthChange(-20.f);
+			if (HitAttributeComp->ApplyHealthChange(-Damage, OwningCharacter))
+			{
+				if (Character)
+				{
+					Character->KnockbackStart(OwningCharacter);
+				}
+			}
+			
 		}
-
-		if (Character)
-		{
-			Character->KnockbackStart(OwningCharacter);
-		}
+		
 		SetGenerateOverlapEvents(false);
+
+		#if !UE_BUILD_SHIPPING
+		//DrawDebugCapsule(GetWorld(), GetComponentLocation(), GetScaledCapsuleHalfHeight(),
+			//GetScaledCapsuleRadius(),GetComponentRotation().Quaternion(), FColor::Red, false, 2.0f);
+
+		#endif
 	}
 }

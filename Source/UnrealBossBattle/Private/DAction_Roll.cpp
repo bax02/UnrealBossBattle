@@ -22,7 +22,7 @@ bool UDAction_Roll::CanStart_Implementation(AActor* Instigator)
 
 		// Try and reduce Stamina
 
-		if (CharacterAttributeComp->ApplyStaminaChange(-6.f, 1.5f))
+		if (CharacterAttributeComp->ApplyStaminaChange(StaminaCost, 1.5f))
 		{
 			return true;
 		}
@@ -36,11 +36,6 @@ void UDAction_Roll::StartAction_Implementation(AActor* Instigator)
 	Super::StartAction_Implementation(Instigator);
 	if (Character)
 	{
-		// Reduce Stamina
-		if (CharacterAttributeComp)
-		{
-			CharacterAttributeComp->ApplyStaminaChange(StaminaCost, 1.5f);
-		}
 
 		// Play animation and sound
 		Character->PlayAnimMontage(RollAnim);

@@ -14,6 +14,7 @@
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "DCapsuleHitboxComponent.h"
+#include "Components/SkeletalMeshComponent.h"
 
 // Sets default values
 ADCharacter::ADCharacter()
@@ -48,6 +49,7 @@ ADCharacter::ADCharacter()
 void ADCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
 }
 
 // Called to bind functionality to input
@@ -79,6 +81,8 @@ void ADCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 	InputComp->BindAction(Input_Attack, ETriggerEvent::Triggered, this, &ADCharacter::AttackStart);
 	InputComp->BindAction(Input_Block, ETriggerEvent::Started, this, &ADCharacter::BlockStart);
 	InputComp->BindAction(Input_Block, ETriggerEvent::Completed, this, &ADCharacter::BlockStop);
+	InputComp->BindAction(Input_Heal, ETriggerEvent::Triggered, this, &ADCharacter::HealStart);
+
 }
 
 void ADCharacter::Move(const FInputActionInstance& Instance)
@@ -173,8 +177,20 @@ void ADCharacter::BlockStop()
 	ActionComp->StopActionByName(this, "Block");
 }
 
+void ADCharacter::HealStart()
+{
+	ActionComp->StartActionByName(this, "Heal");
+}
+
 void ADCharacter::KnockbackStart(AActor* InstigatorActor)
 {
 	ActionComp->StartActionByName(InstigatorActor, "Knockback");
+}
+
+void ADCharacter::PlayDeathAnim()
+{
+	this->PlayAnimMontage(DeathAnim);
+	APlayerController* PlayerController = Cast<APlayerController>(GetController());
+	DisableInput(PlayerController);
 }
 

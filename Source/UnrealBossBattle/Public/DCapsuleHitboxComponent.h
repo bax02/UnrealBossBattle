@@ -34,6 +34,9 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "Sound")
 	TObjectPtr<USoundBase> BlockSound;
 
+	UPROPERTY(EditAnywhere, Category = "Damage")
+	float Damage;
+
 	ACharacter* OwningCharacter;
 
 	UFUNCTION()

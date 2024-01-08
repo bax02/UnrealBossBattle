@@ -16,14 +16,17 @@ class UNREALBOSSBATTLE_API UDAttributeComponent : public UActorComponent
 protected:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Attributes")
+	float MaxHealth;
+
 	float Health;
 
-public:	
+public:
+
 	// Sets default values for this component's properties
 	UDAttributeComponent();
 
 	UFUNCTION(BlueprintCallable, Category = "Attributes")
-	bool ApplyHealthChange(float Delta);
+	bool ApplyHealthChange(float Delta, AActor* InstigatorActor);
 
 	UFUNCTION(BlueprintCallable, Category = "Attributes")
 	static UDAttributeComponent* GetAttributes(AActor* FromActor);

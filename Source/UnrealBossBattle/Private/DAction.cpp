@@ -22,7 +22,7 @@ bool UDAction::CanStart_Implementation(AActor* Instigator)
 
 void UDAction::StartAction_Implementation(AActor* Instigator)
 {
-	UE_LOG(LogTemp, Log, TEXT("Running: %s"), *GetNameSafe(this));
+	//UE_LOG(LogTemp, Log, TEXT("Running: %s"), *GetNameSafe(this));
 
 	UDActionComponent* Comp = GetOwningComponent();
 	Comp->ActiveGameplayTags.AppendTags(GrantsTags);
@@ -37,7 +37,7 @@ void UDAction::StartAction_Implementation(AActor* Instigator)
 
 void UDAction::StopAction_Implementation(AActor* Instigator)
 {
-	UE_LOG(LogTemp, Log, TEXT("Stopped: %s"), *GetNameSafe(this));
+	//UE_LOG(LogTemp, Log, TEXT("Stopped: %s"), *GetNameSafe(this));
 
 	ensureAlways(bIsRunning);
 
