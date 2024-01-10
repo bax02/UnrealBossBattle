@@ -31,7 +31,4 @@ public:
 
 	virtual void StopAction_Implementation(AActor* Instigator) override;
 
-	static bool BlockHit(ACharacter* HitCharacter, UParticleSystem* HitParticles, USoundBase* HitSound);
-
-	
 };

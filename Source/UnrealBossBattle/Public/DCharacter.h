@@ -48,9 +48,17 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "Sound")
 	TObjectPtr<USoundBase> HitSound;
 
+	UPROPERTY(EditAnywhere, Category = "Sound")
+	TObjectPtr<USoundBase> BlockSound;
+
 	// Animations
 	UPROPERTY(EditAnywhere, Category = "Death")
 	TObjectPtr<UAnimMontage> DeathAnim;
+
+	// Particles
+
+	UPROPERTY(EditDefaultsOnly, Category = "Particles")
+	UParticleSystem* BlockParticles;
 
 	// Enhanced Input
 	UPROPERTY(EditDefaultsOnly, Category="Input")
@@ -112,14 +120,13 @@ public:
 	// Sets default values for this character's properties
 	ADCharacter();
 
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
-
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 	void KnockbackStart(AActor* InstigatorActor);
 
 	void PlayDeathAnim();
+
+	bool OnBlock();
 
 };

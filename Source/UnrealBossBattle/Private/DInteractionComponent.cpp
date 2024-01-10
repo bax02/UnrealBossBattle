@@ -105,7 +105,10 @@ void UDInteractionComponent::PrimaryInteract()
 {
 	if (FocusedActor == nullptr)
 	{
+		#if !UE_BUILD_SHIPPING
 		GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Red, "No Focus Actor to Interact");
+		#endif
+
 		return;
 	}
 	APawn* MyPawn = Cast<APawn>(GetOwner());

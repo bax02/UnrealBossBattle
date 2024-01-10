@@ -14,7 +14,7 @@ void UDWorldUserWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTim
 	{
 		RemoveFromParent();
 
-		UE_LOG(LogTemp, Warning, TEXT("AttachedActor no longer valid."));
+		//UE_LOG(LogTemp, Warning, TEXT("AttachedActor no longer valid."));
 		return;
 	}
 

@@ -64,7 +64,7 @@ void UDAnimNotifyState_SphereHitbox::UpdateHitbox()
 			if (HitAttributeComp)
 			{
 				// Update the hit actors health
-				if (HitAttributeComp->ApplyHealthChange(-20.f, Character))
+				if (HitAttributeComp->ApplyHealthChange(-40.f, Character))
 				{
 					ADCharacter* HitCharacter = Cast<ADCharacter>(Hit.GetActor());
 

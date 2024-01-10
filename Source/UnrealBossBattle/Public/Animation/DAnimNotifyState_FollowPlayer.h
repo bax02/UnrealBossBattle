@@ -23,7 +23,9 @@ private:
 	AAIController* Controller;	
 public:
 
-	bool ShouldFireInEditor() override { return false; }
+	#if WITH_EDITORONLY_DATA
+	bool ShouldFireInEditor() override { return false; };
+	#endif
 
 	void NotifyBegin(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, float TotalDuration, const FAnimNotifyEventReference& EventReference) override;
 	

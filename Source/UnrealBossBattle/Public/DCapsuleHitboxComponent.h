@@ -28,12 +28,6 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "Sound")
 	TObjectPtr<USoundBase> HitSound;
 
-	UPROPERTY(EditDefaultsOnly, Category = "Particles")
-	UParticleSystem* BlockParticles;
-
-	UPROPERTY(EditAnywhere, Category = "Sound")
-	TObjectPtr<USoundBase> BlockSound;
-
 	UPROPERTY(EditAnywhere, Category = "Damage")
 	float Damage;
 

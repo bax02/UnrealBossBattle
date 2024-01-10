@@ -10,14 +10,13 @@
 #include "DActionComponent.h"
 #include "DAction_Roll.h"
 #include "DAction_Block.h"
-
-#include UE_INLINE_GENERATED_CPP_BY_NAME(DCapsuleHitboxComponent)
+#include "Kismet/KismetMathLibrary.h"
 
 UDCapsuleHitboxComponent::UDCapsuleHitboxComponent()
 {
+	PrimaryComponentTick.bCanEverTick = false;
 	OwningCharacter = Cast<ACharacter>(GetOwner());
-	ensure(OwningCharacter);
-	Damage = 20.0f;
+	Damage = 12.0f;
 }
 
 void UDCapsuleHitboxComponent::BeginPlay()
@@ -39,12 +38,18 @@ void UDCapsuleHitboxComponent::OnOverlap(UPrimitiveComponent* OverlappedComponen
 
 		if (Character && UDActionComponent::GetActions(Character)->IsActionOfClassRunning(UDAction_Block::StaticClass()))
 		{
-			float HitActorRotation = Character->GetActorRotation().Clamp().Yaw - 180.f;
-			float OwningActorRotation = OwningCharacter->GetActorRotation().Clamp().Yaw;
-			// If the Hit Actor is facing the Owning Actor within 60 degrees then block
-			if (FMath::Abs(HitActorRotation - OwningActorRotation) < 60.f)
+			FVector HitActorVector = Character->GetActorForwardVector();
+			FVector Direction = (OwningCharacter->GetActorLocation() - Character->GetActorLocation()).GetSafeNormal();
+
+			double DotProduct = HitActorVector.Dot(Direction);
+
+			double Result = UKismetMathLibrary::DegAcos(DotProduct);
+
+			//UE_LOG(LogTemp, Log, TEXT("Result %f"), Result);
+			// If the Hit Actor is facing the Owning Actor within 70 degrees then block
+			if (Result < 70)
 			{
-				if (UDAction_Block::BlockHit(Character, BlockParticles, BlockSound))
+				if (Character->OnBlock())
 				{
 					// We did not have enough stamina to block
 					return;

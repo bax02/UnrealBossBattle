@@ -34,7 +34,7 @@ void UDCharacterAttributeComponent::UpdateStamina()
 {
 	float StaminaChange = 0;
 	float Cooldown = 0;
-	if (OwningActionComp->IsActionOfClassRunning(UDAction_Sprint::StaticClass()))
+	if (OwningActionComp->IsActionOfClassRunning(UDAction_Sprint::StaticClass()) && OwningCharacter->GetVelocity().Length() > 10)
 	{
 		// We are sprinting
 		StaminaChange = -0.25f;
@@ -43,7 +43,7 @@ void UDCharacterAttributeComponent::UpdateStamina()
 	}
 	else if (!GetWorld()->GetTimerManager().IsTimerActive(TimerHandle_StaminaCooldown)){
 		// We are not in a cooldown so we can regenerate stamina
-		StaminaChange = 3.f;
+		StaminaChange = 2.2f;
 	}
 	if (!ApplyStaminaChange(StaminaChange, Cooldown))
 	{

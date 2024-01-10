@@ -6,7 +6,7 @@
 
 UDActionComponent::UDActionComponent()
 {
-	PrimaryComponentTick.bCanEverTick = true;
+	PrimaryComponentTick.bCanEverTick = false;
 }
 
 
@@ -20,16 +20,6 @@ void UDActionComponent::BeginPlay()
 		AddAction(ActionClass);
 	}
 	
-}
-
-
-// Called every frame
-void UDActionComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
-{
-	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-
-	FString DebugMsg = GetNameSafe(GetOwner()) + " : " + ActiveGameplayTags.ToStringSimple();
-	GEngine->AddOnScreenDebugMessage(-1, 0.0f, FColor::White, DebugMsg);
 }
 
 void UDActionComponent::AddAction(TSubclassOf<UDAction> ActionClass)
@@ -54,8 +44,10 @@ bool UDActionComponent::StartActionByName(AActor* Instigator, FName ActionName)
 		{
 			if (!Action->CanStart(Instigator))
 			{
+				#if !UE_BUILD_SHIPPING
 				FString FailedMsg = FString::Printf(TEXT("Failed to run: %s"), *ActionName.ToString());
 				GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Red, FailedMsg);
+				#endif
 				continue;
 			}
 			Action->StartAction(Instigator);

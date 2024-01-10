@@ -36,10 +36,4 @@ protected:
 
 	UPROPERTY(EditAnywhere, Category = "DespawnInteractable")
 	ADDoor* DoorInstance;
-
-public:
-
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
-
 };

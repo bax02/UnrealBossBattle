@@ -20,7 +20,7 @@
 ADCharacter::ADCharacter()
 {
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
+	PrimaryActorTick.bCanEverTick = false;
 
 	SpringArmComp = CreateDefaultSubobject<USpringArmComponent>("SpringArmComp");
 	SpringArmComp->bUsePawnControlRotation = true;
@@ -43,13 +43,6 @@ ADCharacter::ADCharacter()
 	GetCharacterMovement()->bOrientRotationToMovement = true;
 	bUseControllerRotationYaw = false;
 	bCanMove = true;
-}
-
-// Called every frame
-void ADCharacter::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-
 }
 
 // Called to bind functionality to input
@@ -192,5 +185,21 @@ void ADCharacter::PlayDeathAnim()
 	this->PlayAnimMontage(DeathAnim);
 	APlayerController* PlayerController = Cast<APlayerController>(GetController());
 	DisableInput(PlayerController);
+}
+
+bool ADCharacter::OnBlock()
+{
+	if (CharacterAttributeComp)
+	{
+		if (!CharacterAttributeComp->ApplyStaminaChange(-15.f, 1.5f))
+		{
+			// We do not have enough stamina to block return false and break guard
+			ActionComp->StopActionByName(this, "Block");
+			return false;
+		}
+	}
+	UGameplayStatics::SpawnSoundAttached(BlockSound, GetMesh());
+	UGameplayStatics::SpawnEmitterAttached(BlockParticles, GetMesh(), "ShieldCenter");
+	return true;
 }
 

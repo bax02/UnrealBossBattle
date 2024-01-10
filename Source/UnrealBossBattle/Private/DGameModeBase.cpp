@@ -132,10 +132,8 @@ void ADGameModeBase::DeathDelay_Elapsed()
 
 void ADGameModeBase::StopAmbience()
 {
-    UE_LOG(LogTemp, Log, TEXT("Try STOP Ambience"));
     if (AmbienceInstance)
     {
-        UE_LOG(LogTemp, Log, TEXT("Stopping Ambience"));
         AmbienceInstance->Stop();
     }
 }

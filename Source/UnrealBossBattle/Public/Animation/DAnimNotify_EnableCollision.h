@@ -29,6 +29,7 @@ protected:
 public:
 	void Notify(class USkeletalMeshComponent* MeshComp, class UAnimSequenceBase* Animation, const FAnimNotifyEventReference& EventReference) override;
 
-	bool ShouldFireInEditor() override { return false; }
-	
+	#if WITH_EDITORONLY_DATA
+	bool ShouldFireInEditor() override { return false; };
+	#endif
 };
