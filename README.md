@@ -1,5 +1,9 @@
 # UnrealBossBattle
-A simple boss battle inspired by souls-like games. Made for fun to showcase and improve on my C++ and Unreal Engine skills.
+A simple boss battle inspired by souls-like games. Made for fun to showcase and improve on my C++ and Unreal Engine skills. Made using C++ and minimal blueprints.
+
+![Banner](BossBattleBanner1.png)
+
+[Watch The YouTube Demo Video](https://youtu.be/9kaBWkGTkUc?si=pjO7ZW0UEAhsPSa9)
 
 >**Engine Version:** Made in Unreal Engine 5.3.2
 
