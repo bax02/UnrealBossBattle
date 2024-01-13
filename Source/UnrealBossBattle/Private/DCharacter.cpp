@@ -5,15 +5,15 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Camera/CameraComponent.h"
-#include "DActionComponent.h"
-#include "DInteractionComponent.h"
-#include "DCharacterAttributeComponent.h"
+#include "Actions/DActionComponent.h"
+#include "Components/DInteractionComponent.h"
+#include "Attributes/DCharacterAttributeComponent.h"
 #include "Kismet/GameplayStatics.h"
 
 // Enhanced Input
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
-#include "DCapsuleHitboxComponent.h"
+#include "Components/DCapsuleHitboxComponent.h"
 #include "Components/SkeletalMeshComponent.h"
 
 // Sets default values

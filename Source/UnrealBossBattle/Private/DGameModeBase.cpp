@@ -11,7 +11,7 @@
 #include "Blueprint/UserWidget.h"
 #include "Kismet/GameplayStatics.h"
 #include "Components/AudioComponent.h"
-#include "DDoor.h"
+#include "Actors/DDoor.h"
 
 ADGameModeBase::ADGameModeBase()
 {

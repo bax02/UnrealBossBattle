@@ -1,12 +1,9 @@
 #include "AI/DAICharacter.h"
-#include "DActionComponent.h"
+#include "Actions/DActionComponent.h"
 #include "Components/SkeletalMeshComponent.h"
-#include "DrawDebugHelpers.h"
-#include "DAttributeComponent.h"
+#include "Attributes/DAttributeComponent.h"
 #include "Particles/ParticleSystemComponent.h"
-#include "Kismet/GameplayStatics.h"
-#include "Kismet/KismetSystemLibrary.h"
-#include "DCapsuleHitboxComponent.h"
+#include "Components/DEnemyCapsuleHitboxComponent.h"
 
 // Sets default values
 ADAICharacter::ADAICharacter()
@@ -18,7 +15,7 @@ ADAICharacter::ADAICharacter()
 	ParticleComp = CreateDefaultSubobject<UParticleSystemComponent>("ParticleComp");
 	ParticleComp->SetupAttachment(GetMesh(), "pelvis");
 
-	HitboxComp = CreateDefaultSubobject<UDCapsuleHitboxComponent>("HitboxComp");
+	HitboxComp = CreateDefaultSubobject<UDEnemyCapsuleHitboxComponent>("HitboxComp");
 	HitboxComp->SetupAttachment(GetMesh(), "HammerCenter");
 	HitboxComp->ComponentTags.Add("WeaponCollision");
 }
@@ -32,6 +29,7 @@ void ADAICharacter::BeginPlay()
 void ADAICharacter::PlayDeathAnim()
 {
 	GetCapsuleComponent()->SetCollisionResponseToChannel(ECC_Pawn, ECR_Ignore);
+	ParticleComp->SetVisibility(false);
 	GetMesh()->SetGenerateOverlapEvents(false);
 	PlayAnimMontage(DeathAnim);
 }

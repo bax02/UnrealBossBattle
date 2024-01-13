@@ -3,8 +3,8 @@
 
 #include "Animation/DAnimNotify_AttackEnd.h"
 #include "DCharacter.h"
-#include "DActionComponent.h"
-#include "DAction_Attack.h"
+#include "Actions/DActionComponent.h"
+#include "Actions/DAction_Attack.h"
 
 void UDAnimNotify_AttackEnd::Notify(class USkeletalMeshComponent* MeshComp, class UAnimSequenceBase* Animation, const FAnimNotifyEventReference& EventReference)
 {

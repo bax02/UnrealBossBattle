@@ -4,9 +4,9 @@
 #include "Animation/DAnimNotifyState_SphereHitbox.h"
 #include "Kismet/GameplayStatics.h"
 #include "GameFramework/Character.h"
-#include "DActionComponent.h"
-#include "DAction_Roll.h"
-#include "DAttributeComponent.h"
+#include "Actions/DActionComponent.h"
+#include "Actions/DAction_Roll.h"
+#include "Attributes/DAttributeComponent.h"
 #include "DCharacter.h"
 
 void UDAnimNotifyState_SphereHitbox::NotifyBegin(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, float TotalDuration, const FAnimNotifyEventReference& EventReference)

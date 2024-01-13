@@ -6,7 +6,7 @@
 
 class UDAttributeComponent;
 class UParticleSystemComponent;
-class UDCapsuleHitboxComponent;
+class UDEnemyCapsuleHitboxComponent;
 
 
 UCLASS()
@@ -23,7 +23,7 @@ protected:
 	UDAttributeComponent* AttributeComp;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
-	UDCapsuleHitboxComponent* HitboxComp;
+	UDEnemyCapsuleHitboxComponent* HitboxComp;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	UParticleSystemComponent* ParticleComp;
