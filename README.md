@@ -33,13 +33,14 @@ A simple boss battle inspired by souls-like games. Made for fun to showcase and 
     - One basic combo attack
     - Two ultimate attacks with random selection and cooldown
     - Following and attack range detection
+- Character accurate hitboxes
 - UI
   - Health Bar
   - Stamina Bar
   - Health Potion Indicator
   - Main Menu
   - Game Over/Victory Screens
-- Gamemode Logic
+- Game Logic
   - Cutscenes
   - Level Resetting and Game Flow
 - Animation & Particle Effects
